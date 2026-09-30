@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f4ef">
+  <title>Attendance | Team Overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f2f4ef;
+      --surface: #ffffff;
+      --ink: #1d2b26;
+      --muted: #74817a;
+      --line: #e3e8e1;
+      --forest: #173b30;
+      --mint: #d8f1e3;
+      --amber: #f4ddb0;
+      --coral: #f4d2c9;
+      --blue: #d6e7ef;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    button, input, select { font: inherit; }
+    button, a, select { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    .shell { min-height: 100vh; }
+    .rail {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 2;
+      display: flex;
+      width: 224px;
+      flex-direction: column;
+      padding: 26px 16px 20px;
+      background: var(--forest);
+      color: #f4f7f1;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 10px; }
+    .brand-mark {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      border-radius: 5px;
+      background: #d4ead8;
+      color: var(--forest);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .brand-name { font-size: 14px; font-weight: 700; }
+    .brand-sub { display: block; margin-top: 1px; color: #a8bdb2; font-size: 10px; }
+    .rail-label {
+      margin: 42px 10px 10px;
+      color: #9fb4a8;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+    .rail-link {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-height: 40px;
+      padding: 0 10px;
+      border-radius: 4px;
+      color: #c8d6ce;
+      font-size: 13px;
+    }
+    .rail-link[aria-current="page"] { background: #2a5144; color: #fff; }
+    .rail-link-mark { width: 7px; height: 7px; border: 1px solid currentColor; border-radius: 2px; }
+    .rail-foot { margin-top: auto; padding: 14px 10px 0; border-top: 1px solid #315447; color: #b7c8bf; font-size: 11px; }
+    .main { max-width: 1480px; margin-left: 224px; padding: 30px clamp(22px, 4vw, 60px) 48px; }
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 25px; border-bottom: 1px solid var(--line); }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .demo-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 9px;
+      border: 1px solid #e4c78d;
+      border-radius: 4px;
+      background: #fff8e8;
+      color: #74521a;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+    .demo-dot { width: 6px; height: 6px; border-radius: 50%; background: #c58b30; }
+    .avatar { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid #d5ded6; border-radius: 50%; background: #e2ece3; color: #375849; font-size: 11px; font-weight: 700; }
+    .intro { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 30px 0 22px; }
+    .eyebrow { margin: 0 0 7px; color: var(--muted); font-family: "DM Mono", monospace; font-size: 10px; text-transform: uppercase; }
+    h1 { margin: 0; font-size: 27px; font-weight: 600; line-height: 1.2; }
+    .date { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .metric {
+      min-height: 124px;
+      padding: 17px 18px 15px;
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--tone);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .metric-label { color: var(--muted); font-size: 12px; }
+    .metric-value { display: block; margin-top: 13px; font-size: 31px; font-weight: 600; line-height: 1; }
+    .metric-note { margin-top: 9px; color: var(--muted); font-size: 11px; }
+    .metric:nth-child(1) { --tone: #6e9a7d; }
+    .metric:nth-child(2) { --tone: #62a47d; }
+    .metric:nth-child(3) { --tone: #d5a54e; }
+    .metric:nth-child(4) { --tone: #dc8876; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 34px 0 14px; }
+    .section-head h2 { margin: 0; font-size: 16px; font-weight: 600; }
+    .section-sub { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .table-tools { display: flex; align-items: center; gap: 8px; }
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; top: 50%; left: 11px; width: 13px; height: 13px; border: 1.5px solid #839088; border-radius: 50%; transform: translateY(-58%); pointer-events: none; }
+    .search-icon::after { position: absolute; right: -5px; bottom: -3px; width: 6px; height: 1.5px; background: #839088; content: ""; transform: rotate(48deg); }
+    .search-input, .filter-select {
+      height: 36px;
+      border: 1px solid #dce3db;
+      border-radius: 4px;
+      outline: none;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 12px;
+    }
+    .search-input { width: 210px; padding: 0 11px 0 32px; }
+    .filter-select { min-width: 124px; padding: 0 28px 0 10px; }
+    .search-input:focus, .filter-select:focus { border-color: #5e8c72; box-shadow: 0 0 0 2px #d8f1e3; }
+    .export-button { height: 36px; padding: 0 12px; border: 0; border-radius: 4px; background: var(--forest); color: #fff; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .export-button:hover { background: #245143; }
+    .table-frame { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 12px 16px; border-bottom: 1px solid var(--line); background: #fafbf9; color: var(--muted); font-family: "DM Mono", monospace; font-size: 10px; font-weight: 400; text-transform: uppercase; white-space: nowrap; }
+    td { height: 58px; padding: 10px 16px; border-bottom: 1px solid #edf0ec; font-size: 12px; white-space: nowrap; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .employee { display: flex; align-items: center; gap: 10px; }
+    .person-avatar { display: grid; width: 30px; height: 30px; flex: none; place-items: center; border-radius: 50%; background: var(--avatar-bg); color: var(--avatar-ink); font-size: 10px; font-weight: 700; }
+    .person-name { font-weight: 600; }
+    .person-id { display: block; margin-top: 2px; color: var(--muted); font-family: "DM Mono", monospace; font-size: 10px; }
+    .mono { color: #47574e; font-family: "DM Mono", monospace; font-size: 11px; }
+    .status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+    .status::before { width: 5px; height: 5px; border-radius: 50%; background: currentColor; content: ""; }
+    .status-present { background: var(--mint); color: #276844; }
+    .status-late { background: var(--amber); color: #805a19; }
+    .status-absent { background: var(--coral); color: #994b3c; }
+    .empty-row { display: none; padding: 30px; color: var(--muted); text-align: center; }
+    .table-foot { display: flex; justify-content: space-between; gap: 12px; padding: 11px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+    .preview-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 20px; padding: 12px 14px; border: 1px solid #eadbb8; border-radius: 4px; background: #fffaf0; color: #665733; font-size: 11px; }
+    .note-mark { display: grid; width: 17px; height: 17px; flex: none; place-items: center; border: 1px solid #c8a85d; border-radius: 50%; font-family: "DM Mono", monospace; font-size: 10px; }
+
+    @media (max-width: 1050px) {
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .main { padding-right: 26px; padding-left: 26px; }
+    }
+    @media (max-width: 700px) {
+      .rail { position: static; width: 100%; height: auto; padding: 14px 18px; }
+      .rail-label, .rail-link, .rail-foot { display: none; }
+      .main { margin-left: 0; padding: 20px 16px 32px; }
+      .topline { padding-bottom: 17px; }
+      .intro { align-items: flex-start; flex-direction: column; gap: 7px; padding: 22px 0 17px; }
+      h1 { font-size: 24px; }
+      .metrics { gap: 8px; }
+      .metric { min-height: 112px; padding: 13px; }
+      .metric-value { font-size: 27px; }
+      .section-head { align-items: flex-start; flex-direction: column; margin-top: 27px; }
+      .table-tools { display: grid; width: 100%; grid-template-columns: 1fr 1fr; }
+      .search-wrap { grid-column: 1 / -1; }
+      .search-input { width: 100%; }
+      .filter-select, .export-button { width: 100%; }
+      .table-frame { margin-right: -1px; }
+      .table-foot { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .metric { animation: arrive 420ms both; }
+      .metric:nth-child(2) { animation-delay: 45ms; }
+      .metric:nth-child(3) { animation-delay: 90ms; }
+      .metric:nth-child(4) { animation-delay: 135ms; }
+      @keyframes arrive { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail" aria-label="Main navigation">
+      <a class="brand" href="#overview">
+        <span class="brand-mark" aria-hidden="true">AM</span>
+        <span><span class="brand-name">Attendance</span><span class="brand-sub">PEOPLE OPERATIONS</span></span>
+      </a>
+      <p class="rail-label">Workspace</p>
+      <a class="rail-link" href="#overview" aria-current="page"><span class="rail-link-mark" aria-hidden="true"></span>Overview</a>
+      <a class="rail-link" href="#team"><span class="rail-link-mark" aria-hidden="true"></span>Team log</a>
+      <div class="rail-foot">Static preview · No account connected</div>
+    </aside>
+
+    <main class="main" id="overview">
+      <header class="topline">
+        <div class="crumb">Workspace <span aria-hidden="true">/</span> Overview</div>
+        <div class="top-actions">
+          <span class="demo-tag"><span class="demo-dot" aria-hidden="true"></span>Static demo</span>
+          <span class="avatar" aria-label="Preview user">AD</span>
+        </div>
+      </header>
+
+      <section class="intro" aria-labelledby="page-title">
+        <div><p class="eyebrow">Daily operations</p><h1 id="page-title">Team attendance</h1></div>
+        <time class="date" id="today"></time>
+      </section>
+
+      <section class="metrics" aria-label="Sample attendance summary">
+        <article class="metric"><span class="metric-label">Team members</span><strong class="metric-value">24</strong><div class="metric-note">Across all departments</div></article>
+        <article class="metric"><span class="metric-label">Present today</span><strong class="metric-value">21</strong><div class="metric-note">87.5% of the team</div></article>
+        <article class="metric"><span class="metric-label">Arrived late</span><strong class="metric-value">02</strong><div class="metric-note">After the grace period</div></article>
+        <article class="metric"><span class="metric-label">Not checked in</span><strong class="metric-value">01</strong><div class="metric-note">As of this preview</div></article>
+      </section>
+
+      <section id="team" aria-labelledby="team-title">
+        <div class="section-head">
+          <div><h2 id="team-title">Attendance log</h2><p class="section-sub">Example records for today</p></div>
+          <div class="table-tools">
+            <label class="search-wrap"><span class="search-icon" aria-hidden="true"></span><span class="visually-hidden">Search employees</span><input class="search-input" id="search" type="search" placeholder="Search name or ID"></label>
+            <label><span class="visually-hidden">Filter by status</span><select class="filter-select" id="status-filter"><option value="all">All statuses</option><option value="Present">Present</option><option value="Late">Late</option><option value="Absent">Absent</option></select></label>
+            <button class="export-button" id="export" type="button">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-frame">
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th scope="col">Employee</th><th scope="col">Department</th><th scope="col">Check-in</th><th scope="col">Check-out</th><th scope="col">Status</th></tr></thead>
+              <tbody id="records">
+                <tr data-name="samina noor" data-id="emp-014" data-status="Present"><td><div class="employee"><span class="person-avatar" style="--avatar-bg:#dcece0;--avatar-ink:#315e43">SN</span><span><span class="person-name">Samina Noor</span><span class="person-id">EMP-014</span></span></div></td><td>Operations</td><td class="mono">08:47</td><td class="mono">17:08</td><td><span class="status status-present">Present</span></td></tr>
+                <tr data-name="adeel khan" data-id="emp-022" data-status="Late"><td><div class="employee"><span class="person-avatar" style="--avatar-bg:#f4e5c9;--avatar-ink:#76551c">AK</span><span><span class="person-name">Adeel Khan</span><span class="person-id">EMP-022</span></span></div></td><td>Finance</td><td class="mono">09:18</td><td class="mono">—</td><td><span class="status status-late">Late</span></td></tr>
+                <tr data-name="rida ahmed" data-id="emp-008" data-status="Present"><td><div class="employee"><span class="person-avatar" style="--avatar-bg:#f1ddd3;--avatar-ink:#8b5140">RA</span><span><span class="person-name">Rida Ahmed</span><span class="person-id">EMP-008</span></span></div></td><td>People</td><td class="mono">08:56</td><td class="mono">—</td><td><span class="status status-present">Present</span></td></tr>
+                <tr data-name="hassan ali" data-id="emp-031" data-status="Absent"><td><div class="employee"><span class="person-avatar" style="--avatar-bg:#dce7ec;--avatar-ink:#3c6576">HA</span><span><span class="person-name">Hassan Ali</span><span class="person-id">EMP-031</span></span></div></td><td>Engineering</td><td class="mono">—</td><td class="mono">—</td><td><span class="status status-absent">Absent</span></td></tr>
+                <tr data-name="maha tariq" data-id="emp-019" data-status="Present"><td><div class="employee"><span class="person-avatar" style="--avatar-bg:#e9e3d2;--avatar-ink:#675b38">MT</span><span><span class="person-name">Maha Tariq</span><span class="person-id">EMP-019</span></span></div></td><td>Operations</td><td class="mono">08:39</td><td class="mono">—</td><td><span class="status status-present">Present</span></td></tr>
+                <tr data-name="bilal sheikh" data-id="emp-027" data-status="Late"><td><div class="employee"><span class="person-avatar" style="--avatar-bg:#e4dff0;--avatar-ink:#594878">BS</span><span><span class="person-name">Bilal Sheikh</span><span class="person-id">EMP-027</span></span></div></td><td>Engineering</td><td class="mono">09:24</td><td class="mono">—</td><td><span class="status status-late">Late</span></td></tr>
+                <tr data-name="ayesha malik" data-id="emp-003" data-status="Present"><td><div class="employee"><span class="person-avatar" style="--avatar-bg:#d8e9e7;--avatar-ink:#356660">AM</span><span><span class="person-name">Ayesha Malik</span><span class="person-id">EMP-003</span></span></div></td><td>People</td><td class="mono">08:51</td><td class="mono">—</td><td><span class="status status-present">Present</span></td></tr>
+                <tr data-name="usman raza" data-id="emp-011" data-status="Present"><td><div class="employee"><span class="person-avatar" style="--avatar-bg:#f0dfd7;--avatar-ink:#885743">UR</span><span><span class="person-name">Usman Raza</span><span class="person-id">EMP-011</span></span></div></td><td>Finance</td><td class="mono">08:59</td><td class="mono">—</td><td><span class="status status-present">Present</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="empty-row" id="empty-state">No matching employees.</div>
+          <div class="table-foot"><span id="result-count" aria-live="polite">Showing 8 sample records</span><span>All times shown in local time</span></div>
+        </div>
+      </section>
+
+      <aside class="preview-note"><span class="note-mark" aria-hidden="true">i</span><span>Preview only: these sample records are not connected to live attendance data. Backend and sign-in are not enabled.</span></aside>
+    </main>
+  </div>
+  <style>.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
+  <script>
+    const rows = [...document.querySelectorAll('#records tr')];
+    const search = document.querySelector('#search');
+    const statusFilter = document.querySelector('#status-filter');
+    const emptyState = document.querySelector('#empty-state');
+    const resultCount = document.querySelector('#result-count');
+
+    document.querySelector('#today').textContent = new Intl.DateTimeFormat(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(new Date());
+
+    function filteredRows() {
+      const query = search.value.trim().toLowerCase();
+      const status = statusFilter.value;
+      return rows.filter(row => {
+        const matchesText = row.dataset.name.includes(query) || row.dataset.id.includes(query);
+        return matchesText && (status === 'all' || row.dataset.status === status);
+      });
+    }
+
+    function renderRows() {
+      const visibleRows = filteredRows();
+      rows.forEach(row => { row.hidden = !visibleRows.includes(row); });
+      emptyState.style.display = visibleRows.length ? 'none' : 'block';
+      resultCount.textContent = `Showing ${visibleRows.length} of ${rows.length} sample records`;
+    }
+
+    search.addEventListener('input', renderRows);
+    statusFilter.addEventListener('change', renderRows);
+    document.querySelector('#export').addEventListener('click', () => {
+      const csvRows = [['Employee', 'ID', 'Department', 'Check-in', 'Check-out', 'Status']];
+      filteredRows().forEach(row => {
+        const cells = row.querySelectorAll('td');
+        csvRows.push([cells[0].querySelector('.person-name').textContent, cells[0].querySelector('.person-id').textContent, cells[1].textContent, cells[2].textContent, cells[3].textContent, row.dataset.status]);
+      });
+      const csv = csvRows.map(record => record.map(value => `"${value.replaceAll('"', '""')}"`).join(',')).join('\n');
+      const download = document.createElement('a');
+      download.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      download.download = 'attendance-preview.csv';
+      download.click();
+      URL.revokeObjectURL(download.href);
+    });
+  </script>
+</body>
+</html>
